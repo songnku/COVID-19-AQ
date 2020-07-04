@@ -51,14 +51,16 @@ set.seed(i)
 RF_model <- rmw_do_all(
   data_prepared,
   variables = c(
-    "date_unix","day_julian", "weekday","hour", "temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"),variables_sample=c("temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"),
+    "date_unix","day_julian", "weekday","hour", "temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"),
+    variables_sample=c("temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"),
   n_trees = 300,
   n_samples = 300,
   verbose = TRUE
 )
 
 testing_model <- rmw_predict_the_test_set(model = RF_model$model,df = RF_model$observations) 
-model_performance<-modStats(testing_model, mod = "value", obs = "value_predict", statistic = c("n", "FAC2","MB", "MGE", "NMB", "NMGE", "RMSE", "r","COE", "IOA"),
+model_performance<-modStats(testing_model, mod = "value", obs = "value_predict", 
+statistic = c("n", "FAC2","MB", "MGE", "NMB", "NMGE", "RMSE", "r","COE", "IOA"),
                                            type = "default", rank.name = NULL)
 																	   
 perform<-rbind(perform,model_performance)
