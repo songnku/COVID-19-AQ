@@ -3,7 +3,9 @@ library(plyr)
 library(dplyr)
 library(rmweather)
 library(ranger)
-library(readxl)
+library(readxl)  
+#please install the requaired (above) packages first
+
 filename="Beijing_Urban" #model inputs file
 polllist<-list("co","o3","no2") #run each pullutant one by one
 ncal=100 #ncal: modeling using different seeds and select a model with highest model performance
