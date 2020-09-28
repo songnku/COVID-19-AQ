@@ -14,7 +14,7 @@ filenamelist<-list("Beijing_Rural","Beijing_Traffic","Beijing_Urban")
 for (filename in filenamelist){
 polllist<-list("pm2_5",'pm10','o3','no2','so2','co')
 for (poll in polllist){
-a=paste("D:/COVID-19/",modelout,filename,"/",filename,"_",poll,"_RW_Short.RData",sep='')
+a=paste("D:/COVID-19/",modelout,filename,"/",filename,"_",poll,"_RW.RData",sep='')
 load(a)
 testing_model <- rmw_predict_the_test_set(model = RF_modelo$model,df = RF_modelo$observations) 
 model_performance<-modStats(testing_model, mod = "value", obs = "value_predict", 
