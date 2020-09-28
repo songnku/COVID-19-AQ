@@ -3,23 +3,10 @@ library(plyr)
 library(dplyr)
 library(rmweather)
 library(ranger)
-library(magrittr)
-library(globals)
-library(future)
-library(foreach)
-library(iterators)
-library(parallel)
-library(doFuture)
 library(readxl)
-library(doParallel)
-plan(multicore)
-registerDoParallel(cores = detectCores()- 1)
-registerDoFuture()
-plan(multiprocess)
-filename="Beijing_Urban"
-polllist<-list("co","o3","pm25_pm10")
-#polllist<-list("no2","co","o3")
-ncal=100
+filename="Beijing_Urban" #model inputs file
+polllist<-list("co","o3","no2") #run each pullutant one by one
+ncal=100 #ncal: modeling using different seeds and select a model with highest model performance
 
 Dataraw1 <- read_excel(paste(filename,".xlsx",sep=''), 
                                     sheet = "Sheet1", col_types = c("date", 
@@ -29,11 +16,12 @@ Dataraw1 <- read_excel(paste(filename,".xlsx",sep=''),
                                                                       "numeric", "numeric", "text", 
                                                                 "numeric", "numeric", "numeric", "numeric","numeric",
                                                                       "numeric", "numeric", "numeric", 
-                                                                      "numeric", "numeric", "numeric", "numeric"))
-
-Dataraw1$cluster<-as.factor(Dataraw1$cluster)
-Dataraw1$weekday<-as.factor(Dataraw1$weekday)
+                                                                      "numeric", "numeric", "numeric", "numeric")) #Can also use import csv function
+#Dataraw1: all dataset
+Dataraw1$cluster<-as.factor(Dataraw1$cluster) #set back trajectory as category
+Dataraw1$weekday<-as.factor(Dataraw1$weekday) #set weekday as category
 Dataraw1 <- Dataraw1 %>% filter(!is.na(cluster))
+#Dataraw1: selected dataset for model training and weather normalisation
 Dataraw <-  Dataraw1 %>% filter(date>="2019-12-01"& date <= "2020-05-31")
 
 for (poll in polllist){
@@ -51,8 +39,8 @@ set.seed(i)
 RF_model <- rmw_do_all(
   data_prepared,
   variables = c(
-    "date_unix","day_julian", "weekday","hour", "temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"),
-    variables_sample=c("temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"),
+    "date_unix","day_julian", "weekday","hour", "temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"), #factors for random forest modeling
+    variables_sample=c("temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"), #factors for weather relpacement
   n_trees = 300,
   n_samples = 300,
   verbose = TRUE
@@ -68,6 +56,8 @@ if (model_performance$r > r.min){
 r.min <- model_performance$r
 RF_modelo <- RF_model}
 } 
-save.image(file = paste(filename,"_",poll,"_RW_Short",".RData",sep=""))
-write.table(perform, file=paste(filename,"_",poll,"_RWPerformance_Short",".csv",sep=""), sep=",", row.names=FALSE)
+save.image(file = paste(filename,"_",poll,"_RW",".RData",sep=""))
+write.table(perform, file=paste(filename,"_",poll,"_RWPerformance",".csv",sep=""), sep=",", row.names=FALSE)
 }
+
+
