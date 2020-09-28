@@ -21,8 +21,7 @@ Dataraw1 <- read_excel(paste(filename,".xlsx",sep=''),
 Dataraw1$cluster<-as.factor(Dataraw1$cluster) #set back trajectory as category
 Dataraw1$weekday<-as.factor(Dataraw1$weekday) #set weekday as category
 Dataraw1 <- Dataraw1 %>% filter(!is.na(cluster))
-#Dataraw1: selected dataset for model training and weather normalisation
-Dataraw <-  Dataraw1 %>% filter(date>="2019-12-01"& date <= "2020-05-31")
+Dataraw <-  Dataraw1 %>% filter(date>="2019-12-01"& date <= "2020-05-31") #Dataraw: selected dataset for model training and weather normalisation
 
 for (poll in polllist){
 r.min <- 0.1
