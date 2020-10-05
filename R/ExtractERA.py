@@ -3,10 +3,7 @@ import netCDF4 as nc
 from netCDF4 import Dataset
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib
 import os
-%matplotlib inline
 
 xn='London'
 lat=51.5
@@ -28,17 +25,26 @@ a=list(f.variables['latitude'][:]).index(av)
 b=list(f.variables['longitude'][:]).index(bv)
 
 dtime = netCDF4.num2date(f.variables['time'][:],f.variables['time'].units,calendar=f.variables['time'].calendar)
+
 atm=pd.DataFrame(index=np.array(dtime),
                  data={'ssr':f.variables['ssr'][:,:,a,b][~f.variables['ssr'][:,:,a,b].mask],
                               'tp':f.variables['tp'][:,:,a,b][~f.variables['tp'][:,:,a,b].mask]})
+#atm=pd.DataFrame(index=np.array(dtime),
+ #                data={'ssr':f.variables['ssr'][:,a,b],
+  #                            'tp':f.variables['tp'][:,a,b]})
 atm['blh']=np.nan
 atm['tcc']=np.nan
 atm['sp']=np.nan
 atm['blh'].iloc[:-9]=f.variables['blh'][:,:,a,b][~f.variables['blh'][:,:,a,b].mask]
 atm['tcc'].iloc[:-9]=f.variables['tcc'][:,:,a,b][~f.variables['tcc'][:,:,a,b].mask]
 atm['sp'].iloc[:-9]=f.variables['sp'][:,:,a,b][~f.variables['sp'][:,:,a,b].mask]
+#atm['blh'].iloc[:-9]=f.variables['blh'][:,a,b][:-9]
+#atm['tcc'].iloc[:-9]=f.variables['tcc'][:,a,b][:-9]
+#atm['sp'].iloc[:-9]=f.variables['sp'][:,a,b][:-9]
+
+
 atm.index.name='date'
 atm.index=atm.index.astype('datetime64[ns]')
 atm=atm.sort_index()
 atm.index=atm.index.shift(timezone, freq='H')
-atm.to_csv(xn+'BLHall.csv')
+atm.to_csv(xn+'ERA.csv')
