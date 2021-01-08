@@ -43,7 +43,7 @@ RF_model <- rmw_do_all(
     "date_unix","day_julian", "weekday","hour", "temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"), #factors for random forest modeling
     variables_sample=c("temp",  "RH", "wd", "ws","sp","cluster","tp","blh","tcc","ssr"), #factors for weather relpacement
   n_trees = 300,
-  n_samples = 300,min_node_size = 3,n_samples = 1000,
+  min_node_size = 3,n_samples = 1000,
   verbose = TRUE
 )
 
