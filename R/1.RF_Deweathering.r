@@ -8,7 +8,7 @@ library(readxl)
 
 filename="Beijing_Urban" #model inputs file
 polllist<-list("co","o3","no2") #run each pullutant one by one
-ncal=100 #ncal: modeling using different seeds and select a model with highest model performance
+ncal=100 #ncal: modeling using different seeds and select a model with highest model performance, can just change it to 1
 
 Dataraw1 <- read_excel(paste(filename,".xlsx",sep=''), 
                                     sheet = "Sheet1", col_types = c("date", 
@@ -34,7 +34,7 @@ set.seed(i)
 data_prepared <- Dataraw %>% 
   filter(!is.na(ws)) %>% 
   dplyr::rename(value = poll) %>% 
-  rmw_prepare_data(na.rm = TRUE,fraction = 0.7)
+  rmw_prepare_data(na.rm = TRUE,fraction = 0.7) # training data 70%, testing data 30%
 
 set.seed(i) 
 RF_model <- rmw_do_all(
@@ -45,7 +45,7 @@ RF_model <- rmw_do_all(
   n_trees = 300,
   min_node_size = 3,n_samples = 1000,
   verbose = TRUE
-)
+) #can change the n_samples to lower values, n_samples is the resampling sample size.
 
 testing_model <- rmw_predict_the_test_set(model = RF_model$model,df = RF_model$observations) 
 model_performance<-modStats(testing_model, mod = "value", obs = "value_predict", 
